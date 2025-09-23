@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Sign Up - MIS System</title>
+    <link rel="stylesheet" href="tailwind.css" />
+    <link rel="stylesheet" href="main.css" />
+</head>
+<body class="bg-gradient-to-br from-primary-50 to-accent-100 flex items-center justify-center min-h-screen">
+    <div class="card p-10 w-full max-w-md shadow-custom-lg animate-slide-up border-2 border-primary-100">
+        <h2 class="text-3xl font-extrabold mb-8 text-center text-gradient tracking-tight">Create Your Account</h2>
+        <form id="signin-form" class="space-y-6">
+            <div>
+                <label for="signin-email" class="block mb-2 font-medium">Email</label>
+                <input type="email" id="signin-email" class="input-field focus:ring-4 focus:ring-primary-200" required autocomplete="username" />
+            </div>
+            <div>
+                <label for="signin-role" class="block mb-2 font-medium">Register as</label>
+                <select id="signin-role" class="input-field focus:ring-4 focus:ring-primary-200" required>
+                    <option value="student">Student</option>
+                    <option value="admin">Admin (School/College)</option>
+                </select>
+            </div>
+            <div>
+                <label for="signin-password" class="block mb-2 font-medium">Password</label>
+                <div class="relative">
+                    <input type="password" id="signin-password" class="input-field pr-12 focus:ring-4 focus:ring-primary-200" required autocomplete="new-password" />
+                    <button type="button" id="toggle-signin-password" tabindex="-1" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-primary focus:outline-none">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+                <div class="mt-2">
+                    <div id="signin-password-strength" class="h-2 rounded bg-slate-200 overflow-hidden">
+                        <div id="signin-password-strength-bar" class="h-2 rounded transition-all duration-300"></div>
+                    </div>
+                    <span id="signin-password-strength-text" class="text-xs font-medium"></span>
+                </div>
+            </div>
+            <div>
+                <label for="signin-password-confirm" class="block mb-2 font-medium">Confirm Password</label>
+                <div class="relative">
+                    <input type="password" id="signin-password-confirm" class="input-field pr-12 focus:ring-4 focus:ring-primary-200" required autocomplete="new-password" />
+                    <button type="button" id="toggle-signin-password-confirm" tabindex="-1" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-primary focus:outline-none">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+                <span id="password-match-text" class="text-xs font-medium"></span>
+            </div>
+            <button type="submit" class="btn-primary w-full text-lg shadow-lg">Create Account</button>
+        </form>
+        <p class="mt-6 text-center text-text-secondary">
+            Already have an account?
+            <a href="login.html" class="text-primary font-semibold hover:underline">Sign In</a>
+        </p>
+    </div>
+    <script src="auth.js"></script>
+    <script>
+        // Kadence UI: Show/hide password
+        document.getElementById('toggle-signin-password').addEventListener('click', function() {
+            const pwd = document.getElementById('signin-password');
+            const icon = this.querySelector('i');
+            if (pwd.type === 'password') {
+                pwd.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                pwd.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        });
+        document.getElementById('toggle-signin-password-confirm').addEventListener('click', function() {
+            const pwd = document.getElementById('signin-password-confirm');
+            const icon = this.querySelector('i');
+            if (pwd.type === 'password') {
+                pwd.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                pwd.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        });
+        // Password strength meter
+        document.getElementById('signin-password').addEventListener('input', function() {
+            const val = this.value;
+            const bar = document.getElementById('signin-password-strength-bar');
+            const text = document.getElementById('signin-password-strength-text');
+            let score = 0;
+            if (val.length >= 8) score++;
+            if (/[A-Z]/.test(val)) score++;
+            if (/[0-9]/.test(val)) score++;
+            if (/[^A-Za-z0-9]/.test(val)) score++;
+            let width = ["w-1/4 bg-error", "w-2/4 bg-warning", "w-3/4 bg-accent", "w-full bg-success"][score-1] || "w-1/4 bg-error";
+            bar.className = `h-2 rounded transition-all duration-300 ${width}`;
+            text.textContent = ["Very Weak", "Weak", "Medium", "Strong"][score-1] || "Very Weak";
+            text.className = "text-xs font-medium " + ["text-error", "text-warning", "text-accent", "text-success"][score-1] || "text-error";
+        });
+        // Password match check
+        document.getElementById('signin-password-confirm').addEventListener('input', function() {
+            const pwd = document.getElementById('signin-password').value;
+            const confirm = this.value;
+            const text = document.getElementById('password-match-text');
+            if (confirm === pwd && pwd.length > 0) {
+                text.textContent = "Passwords match";
+                text.className = "text-xs font-medium text-success";
+            } else {
+                text.textContent = "Passwords do not match";
+                text.className = "text-xs font-medium text-error";
+            }
+        });
+    </script>
+</body>
+</html>

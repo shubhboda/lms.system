@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Admin Dashboard - MIS System</title>
+    <link rel="stylesheet" href="tailwind.css" />
+    <link rel="stylesheet" href="main.css" />
+</head>
+<body class="bg-gradient-to-br from-primary-50 to-accent-100 min-h-screen">
+    <div class="flex flex-col min-h-screen">
+        <header class="bg-white shadow p-6 flex items-center justify-between">
+            <h1 class="text-3xl font-bold text-gradient">Admin Dashboard</h1>
+            <a href="login.html" class="btn-secondary">Logout</a>
+        </header>
+        <main class="flex-1 p-8 animate-fade-in">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
+                <div class="card text-center shadow-custom-lg hover:shadow-xl transition-all">
+                    <i class="fas fa-book text-5xl text-primary mb-4 animate-pulse"></i>
+                    <h2 class="text-xl font-semibold mb-2">Manage Courses</h2>
+                    <p class="text-text-secondary mb-4">Add, edit, or remove courses for your institution.</p>
+                    <a href="index.html#courses-section" class="btn-primary">Go to Courses</a>
+                </div>
+                <div class="card text-center shadow-custom-lg hover:shadow-xl transition-all">
+                    <i class="fas fa-file-alt text-5xl text-accent mb-4 animate-pulse"></i>
+                    <h2 class="text-xl font-semibold mb-2">Manage Exams</h2>
+                    <p class="text-text-secondary mb-4">Create and schedule exams for students.</p>
+                    <a href="index.html#exams-section" class="btn-accent">Go to Exams</a>
+                </div>
+                <div class="card text-center shadow-custom-lg hover:shadow-xl transition-all">
+                    <i class="fas fa-users text-5xl text-success mb-4 animate-pulse"></i>
+                    <h2 class="text-xl font-semibold mb-2">Manage Students</h2>
+                    <p class="text-text-secondary mb-4">View and manage student records.</p>
+                    <a href="index.html#students-section" class="btn-success">Go to Students</a>
+                </div>
+            </div>
+            <div class="card p-6 mt-8">
+                <h3 class="text-2xl font-bold mb-4">Analytics & Reports</h3>
+                <p class="text-text-secondary mb-2">(Demo) View exam participation, pass rates, and more coming soon.</p>
+                <div class="h-32 flex items-center justify-center text-slate-400">[Analytics charts placeholder]</div>
+            </div>
+        </main>
+    </div>
+    <script src="https://kit.fontawesome.com/7c2b8eae0a.js" crossorigin="anonymous"></script>
+</body>
+</html>

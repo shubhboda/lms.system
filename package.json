@@ -1,0 +1,13 @@
+{
+  "name": "lms-exam",
+  "version": "1.0.0",
+  "description": "Modern LMS Exam UI with proctoring and security features.",
+  "main": "index.js",
+  "scripts": {
+    "start": "npx serve .",
+    "dev": "npx serve ."
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {}
+}

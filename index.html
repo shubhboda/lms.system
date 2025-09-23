@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MIS System - Exam Course Management</title>
+    <meta name="theme-color" content="#2563EB">
+    <link rel="stylesheet" href="tailwind.css">
+    <link rel="stylesheet" href="main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-background min-h-screen flex font-sans">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white shadow-xl flex flex-col items-center py-10 px-4 min-h-screen sticky top-0 z-20 animate-fade-in">
+        <div class="mb-8 text-center">
+            <div class="text-4xl font-extrabold text-gradient mb-1 tracking-tight">MIS System</div>
+            <div class="text-lg text-text-secondary font-medium">Exam Course Management</div>
+        </div>
+        <nav class="flex flex-col gap-4 w-full" role="navigation" aria-label="Main features">
+            <button id="dashboard-tab" class="feature-icon-btn card flex flex-col items-center py-6 text-lg font-semibold transition-all hover:bg-primary-50 hover:text-primary group" aria-label="Dashboard">
+                <i class="fas fa-tachometer-alt text-3xl mb-2 group-hover:text-primary"></i>
+                Dashboard
+            </button>
+            <button id="courses-tab" class="feature-icon-btn card flex flex-col items-center py-6 text-lg font-semibold transition-all hover:bg-primary-50 hover:text-primary group" aria-label="Courses">
+                <i class="fas fa-book text-3xl mb-2 group-hover:text-primary"></i>
+                Courses
+            </button>
+            <button id="exams-tab" class="feature-icon-btn card flex flex-col items-center py-6 text-lg font-semibold transition-all hover:bg-primary-50 hover:text-primary group" aria-label="Exams">
+                <i class="fas fa-clipboard-list text-3xl mb-2 group-hover:text-primary"></i>
+                Exams
+            </button>
+            <button id="students-tab" class="feature-icon-btn card flex flex-col items-center py-6 text-lg font-semibold transition-all hover:bg-primary-50 hover:text-primary group" aria-label="Students">
+                <i class="fas fa-users text-3xl mb-2 group-hover:text-primary"></i>
+                Students
+            </button>
+            <button id="live-exams-tab" class="feature-icon-btn card flex flex-col items-center py-6 text-lg font-semibold transition-all hover:bg-primary-50 hover:text-primary group" aria-label="Live Exams">
+                <i class="fas fa-clock text-3xl mb-2 group-hover:text-primary"></i>
+                Live Exams
+            </button>
+            <button id="student-interface-tab" class="feature-icon-btn card flex flex-col items-center py-6 text-lg font-semibold transition-all hover:bg-primary-50 hover:text-primary group" aria-label="Student Interface">
+                <i class="fas fa-user-graduate text-3xl mb-2 group-hover:text-primary"></i>
+                Student Interface
+            </button>
+            <button id="code-compiler-tab" class="feature-icon-btn card flex flex-col items-center py-6 text-lg font-semibold transition-all hover:bg-primary-50 hover:text-primary group" aria-label="Code Compiler">
+                <i class="fas fa-code text-3xl mb-2 group-hover:text-primary"></i>
+                Code Compiler
+            </button>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col min-h-screen">
+        <!-- Header -->
+        <header class="bg-white shadow-md px-8 py-6 flex justify-between items-center sticky top-0 z-10 animate-fade-in">
+            <h2 id="page-title" class="text-3xl font-bold text-gradient tracking-tight">Dashboard</h2>
+            <div class="flex items-center space-x-4">
+                <div class="relative">
+                    <input type="text" id="search-input" placeholder="Search..." class="input-field pl-10 w-64 shadow-sm">
+                    <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-text-secondary"></i>
+                </div>
+            </div>
+        </header>
+
+        <!-- Hero Section -->
+        <section class="bg-gradient-to-r from-primary to-secondary py-12 px-8 text-white text-center animate-slide-up flex flex-col md:flex-row items-center justify-center gap-10">
+            <div class="flex-1 flex justify-center">
+                <img src="assets/student-hero.jpg" alt="Student studying" class="rounded-2xl shadow-xl max-w-md w-full object-cover border-4 border-primary-100" loading="lazy" />
+            </div>
+            <div class="flex-1">
+                <h1 class="text-4xl md:text-5xl font-extrabold mb-4 drop-shadow-lg">Welcome to the Future of Exam Management</h1>
+                <p class="text-lg md:text-xl mb-6 opacity-90">Easily manage courses, exams, and students with a beautiful, intuitive dashboard.</p>
+                <a href="login.html" class="btn-accent text-lg shadow-lg">Get Started</a>
+            </div>
+        </section>
+
+        <main class="flex-1 p-8 animate-fade-in">
+            <div id="dashboard-section" class="section">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
+                    <div class="card text-center shadow-custom-lg hover:shadow-xl transition-all">
+                        <i class="fas fa-book text-5xl text-primary mb-4 animate-pulse"></i>
+                        <h3 class="text-3xl font-extrabold text-primary" id="courses-count">0</h3>
+                        <p class="text-text-secondary text-lg">Total Courses</p>
+                    </div>
+                    <div class="card text-center shadow-custom-lg hover:shadow-xl transition-all">
+                        <i class="fas fa-clipboard-list text-5xl text-accent mb-4 animate-pulse"></i>
+                        <h3 class="text-3xl font-extrabold text-accent" id="exams-count">0</h3>
+                        <p class="text-text-secondary text-lg">Total Exams</p>
+                    </div>
+                    <div class="card text-center shadow-custom-lg hover:shadow-xl transition-all">
+                        <i class="fas fa-users text-5xl text-success mb-4 animate-pulse"></i>
+                        <h3 class="text-3xl font-extrabold text-success" id="students-count">0</h3>
+                        <p class="text-text-secondary text-lg">Total Students</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+                    <div class="card">
+                        <h3 class="text-2xl font-bold mb-4">Recent Courses</h3>
+                        <div id="recent-courses" class="space-y-3">
+                            <!-- Recent courses will be added here -->
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3 class="text-2xl font-bold mb-4">Upcoming Exams</h3>
+                        <div id="upcoming-exams" class="space-y-3">
+                            <!-- Upcoming exams will be added here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="courses-section" class="section hidden">
+            <h2 class="text-2xl font-semibold mb-6">Courses</h2>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6" id="courses-list">
+                <!-- Courses will be added here -->
+            </div>
+            <div class="mt-8">
+                <h3 class="text-xl font-semibold mb-4">Add New Course</h3>
+                <form id="course-form" class="card">
+                    <div class="mb-4">
+                        <label for="course-name" class="block text-sm font-medium mb-2">Course Name</label>
+                        <input type="text" id="course-name" class="input-field" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="course-description" class="block text-sm font-medium mb-2">Description</label>
+                        <textarea id="course-description" class="input-field" rows="3"></textarea>
+                    </div>
+                    <button type="submit" class="btn-primary">Add Course</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="exams-section" class="section hidden">
+            <h2 class="text-2xl font-semibold mb-6">Exams</h2>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6" id="exams-list">
+                <!-- Exams will be added here -->
+            </div>
+            <div class="mt-8">
+                <h3 class="text-xl font-semibold mb-4">Add New Exam</h3>
+                <form id="exam-form" class="card">
+                    <div class="mb-4">
+                        <label for="exam-name" class="block text-sm font-medium mb-2">Exam Name</label>
+                        <input type="text" id="exam-name" class="input-field" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="exam-course" class="block text-sm font-medium mb-2">Course</label>
+                        <select id="exam-course" class="input-field" required>
+                            <option value="">Select Course</option>
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <label for="exam-date" class="block text-sm font-medium mb-2">Date</label>
+                        <input type="date" id="exam-date" class="input-field" required>
+                    </div>
+                    <button type="submit" class="btn-primary">Add Exam</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="students-section" class="section hidden">
+            <h2 class="text-2xl font-semibold mb-6">Students</h2>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6" id="students-list">
+                <!-- Students will be added here -->
+            </div>
+            <div class="mt-8">
+                <h3 class="text-xl font-semibold mb-4">Add New Student</h3>
+                <form id="student-form" class="card">
+                    <div class="mb-4">
+                        <label for="student-name" class="block text-sm font-medium mb-2">Student Name</label>
+                        <input type="text" id="student-name" class="input-field" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="student-email" class="block text-sm font-medium mb-2">Email</label>
+                        <input type="email" id="student-email" class="input-field" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="student-course" class="block text-sm font-medium mb-2">Enrolled Course</label>
+                        <select id="student-course" class="input-field" required>
+                            <option value="">Select Course</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn-primary">Add Student</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="live-exams-section" class="section hidden">
+            <h2 class="text-2xl font-semibold mb-6">Live Exams</h2>
+            <div id="live-exams-list" class="space-y-4 mb-6">
+                <!-- Live exams will be listed here -->
+            </div>
+    <div id="live-exam-timer" class="hidden p-4 bg-white rounded shadow text-center">
+        <h3 class="text-xl font-semibold mb-2" id="live-exam-name"></h3>
+        <p class="text-lg font-mono text-accent mb-4" id="timer-display">00:00</p>
+        <button id="end-live-exam-btn" class="btn-accent">End Exam</button>
+        <div id="video-container" class="mt-4">
+            <video id="webcam-video" autoplay muted playsinline width="320" height="240" class="mx-auto rounded border"></video>
+            <p id="face-status" class="mt-2 text-red-600 font-semibold"></p>
+        </div>
+    </div>
+</div>
+    </main>
+
+        <script src="script.js"></script>
+        <script>
+            // Redirect to login page if not already there
+            if (!window.location.pathname.endsWith('login.html') && !window.location.pathname.endsWith('signin.html')) {
+                window.location.replace('login.html');
+            }
+        </script>
+</body>
+</html>

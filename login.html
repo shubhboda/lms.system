@@ -1,0 +1,291 @@
+    <script>
+    // Block screenshot attempts
+    // Attempt to use Screen Capture API (where supported)
+    if (navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) {
+        document.addEventListener('visibilitychange', async function() {
+            if (document.visibilityState === 'hidden') {
+                alert('Screenshots are not allowed on this page.');
+                window.location.reload();
+            }
+        });
+    }
+    // Block PrintScreen key
+    document.addEventListener('keyup', function(e) {
+        if (e.key === 'PrintScreen') {
+            alert('Screenshots are disabled on this page.');
+            // Attempt to clear clipboard (not always possible)
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText('Screenshots are disabled.');
+            }
+        }
+    });
+    </script>
+    <script>
+    // Block copy, paste, and inspect element shortcuts
+    document.addEventListener('keydown', function(e) {
+        // Block Ctrl+Shift+C (inspect), Ctrl+Shift+V (paste), Ctrl+C, Ctrl+V
+        if ((e.ctrlKey && e.shiftKey && (e.code === 'KeyC' || e.code === 'KeyV')) ||
+            (e.ctrlKey && (e.code === 'KeyC' || e.code === 'KeyV')) ||
+            (e.metaKey && (e.code === 'KeyC' || e.code === 'KeyV'))
+        ) {
+            e.preventDefault();
+            alert('Copy, paste, and inspect shortcuts are disabled on this page.');
+        }
+    });
+    // Block right-click context menu
+    document.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+    });
+    </script>
+    <script>
+    // Block access if Bluetooth is enabled
+    async function isBluetoothOn() {
+        if (!navigator.bluetooth) return false;
+        try {
+            // Try to request a device (will only succeed if Bluetooth is on)
+            await navigator.bluetooth.requestDevice({acceptAllDevices: true});
+            return true;
+        } catch (e) {
+            // If user cancels or no device, treat as Bluetooth is on
+            return e.name !== 'NotFoundError';
+        }
+    }
+    (async () => {
+        if (await isBluetoothOn()) {
+            document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;"><div class="card p-8 text-center"><h2 class="text-2xl font-bold text-error mb-4">Access Blocked</h2><p class="text-lg">Bluetooth is enabled.<br>Please turn off Bluetooth and reload the page.</p></div></div>';
+            throw new Error('Blocked due to Bluetooth enabled.');
+        }
+    })();
+    </script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Login - MIS System</title>
+    <link rel="stylesheet" href="tailwind.css" />
+    <link rel="stylesheet" href="main.css" />
+</head>
+<body class="bg-gradient-to-br from-primary-50 to-accent-100 flex items-center justify-center min-h-screen">
+    <div class="card p-10 w-full max-w-md shadow-custom-lg animate-slide-up border-2 border-primary-100">
+        <h2 class="text-3xl font-extrabold mb-8 text-center text-gradient tracking-tight">Sign In to MIS System</h2>
+    <form id="login-form" class="space-y-6">
+            <div>
+                <label for="login-email" class="block mb-2 font-medium">Email</label>
+                <input type="email" id="login-email" name="email" class="input-field focus:ring-4 focus:ring-primary-200" required autocomplete="username" />
+            </div>
+            <div id="login-password-section">
+                <label for="login-password" class="block mb-2 font-medium">Password</label>
+                <div class="relative">
+                    <input type="password" id="login-password" name="password" class="input-field pr-12 focus:ring-4 focus:ring-primary-200" required autocomplete="current-password" />
+                    <button type="button" id="toggle-password" tabindex="-1" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-primary focus:outline-none">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+                <div class="mt-2">
+                    <div id="password-strength" class="h-2 rounded bg-slate-200 overflow-hidden">
+                        <div id="password-strength-bar" class="h-2 rounded transition-all duration-300"></div>
+                    </div>
+                    <span id="password-strength-text" class="text-xs font-medium"></span>
+                </div>
+            </div>
+            <div id="login-face-section">
+                <label class="block mb-2 font-medium">Capture Your Face</label>
+                <video id="login-webcam-video" autoplay muted playsinline width="320" height="240" class="mx-auto rounded border"></video>
+                <button type="button" id="capture-face-btn" class="btn-primary w-full mt-2">Capture Face</button>
+                <canvas id="captured-face-canvas" class="hidden"></canvas>
+                <p id="face-capture-status" class="mt-2 text-green-600 font-semibold"></p>
+            </div>
+            <div id="login-otp-section" class="hidden">
+                <label for="login-otp" class="block mb-2 font-medium">Enter OTP sent to your email</label>
+                <input type="text" id="login-otp" class="input-field" maxlength="6" pattern="[0-9]{6}" autocomplete="one-time-code" />
+                <button type="button" id="send-otp-btn" class="btn-secondary w-full mt-2">Send OTP</button>
+                <p id="otp-status" class="mt-2 text-accent font-semibold"></p>
+            </div>
+            <button type="submit" class="btn-primary w-full text-lg shadow-lg">Sign In</button>
+        </form>
+        <div class="mt-6 text-center">
+            <button id="start-screen-share" class="btn-secondary">Share Your Screen</button>
+            <div id="screen-share-preview" class="mt-4 hidden">
+                <video id="screen-video" autoplay playsinline class="mx-auto rounded border shadow-md" style="max-width:100%;height:300px;"></video>
+                <p class="text-xs text-text-secondary mt-2">Screen sharing is active. Stop sharing from your browser controls.</p>
+            </div>
+        </div>
+    <script>
+    // Screen sharing feature
+    const startScreenShareBtn = document.getElementById('start-screen-share');
+    const screenSharePreview = document.getElementById('screen-share-preview');
+    const screenVideo = document.getElementById('screen-video');
+    if (startScreenShareBtn) {
+        startScreenShareBtn.addEventListener('click', async function() {
+            try {
+                const stream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+                screenVideo.srcObject = stream;
+                screenSharePreview.classList.remove('hidden');
+            } catch (e) {
+                alert('Screen sharing was cancelled or is not supported.');
+            }
+        });
+    }
+    </script>
+        </form>
+        <p class="mt-6 text-center text-text-secondary">
+            Don't have an account?
+            <a href="signin.html" class="text-primary font-semibold hover:underline">Sign Up</a>
+        </p>
+    </div>
+    <script src="auth.js"></script>
+    <script>
+    // Block known browser extensions (basic detection)
+    function detectExtensions() {
+        // List of suspicious global variables or DOM elements injected by popular extensions
+        const suspicious = [
+            'monica', // Monica AI
+            'crxMouse',
+            'Grammarly',
+            'Honey',
+            'LastPass',
+            'window.__REACT_DEVTOOLS_GLOBAL_HOOK__',
+            'window.__VUE_DEVTOOLS_GLOBAL_HOOK__',
+            'window.__REDUX_DEVTOOLS_EXTENSION__',
+            'window.__MONICA_EXTENSION__',
+            'window.monica',
+            'window.monicaPanel',
+            'window.monicaSidebar',
+            'window.monicaAI',
+        ];
+        for (const key of suspicious) {
+            try {
+                if (key.startsWith('window.')) {
+                    if (eval(key) !== undefined) {
+                        return true;
+                    }
+                } else if (window[key] !== undefined) {
+                    return true;
+                }
+            } catch (e) {}
+        }
+        // Check for suspicious DOM elements (e.g., Monica sidebar)
+        if (document.querySelector('[class*="monica"], [id*="monica"]')) {
+            return true;
+        }
+        return false;
+    }
+    if (detectExtensions()) {
+        document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;"><div class="card p-8 text-center"><h2 class="text-2xl font-bold text-error mb-4">Access Blocked</h2><p class="text-lg">Browser extensions are not allowed on this system.<br>Please disable all extensions and reload the page.</p></div></div>';
+        throw new Error('Blocked due to browser extension.');
+    }
+    </script>
+    <script>
+        // OTP login system
+        const loginEmailInput = document.getElementById('login-email');
+        const passwordSection = document.getElementById('login-password-section');
+        const faceSection = document.getElementById('login-face-section');
+        const otpSection = document.getElementById('login-otp-section');
+        const sendOtpBtn = document.getElementById('send-otp-btn');
+        const otpStatus = document.getElementById('otp-status');
+        let generatedOtp = null;
+
+        // Check if user is returning (has logged in before)
+        loginEmailInput.addEventListener('blur', function() {
+            const email = loginEmailInput.value.trim();
+            const users = JSON.parse(localStorage.getItem('users')) || [];
+            const returning = users.some(u => u.email === email && localStorage.getItem('lastLogin_' + email));
+            if (returning) {
+                passwordSection.classList.add('hidden');
+                faceSection.classList.add('hidden');
+                otpSection.classList.remove('hidden');
+            } else {
+                passwordSection.classList.remove('hidden');
+                faceSection.classList.remove('hidden');
+                otpSection.classList.add('hidden');
+            }
+        });
+
+        // Send OTP logic (simulated)
+        sendOtpBtn.addEventListener('click', function() {
+            generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
+            otpStatus.textContent = `OTP sent to your email (simulated): ${generatedOtp}`;
+            otpStatus.classList.remove('text-error');
+            otpStatus.classList.add('text-accent');
+        });
+
+        // Kadence UI: Show/hide password
+        document.getElementById('toggle-password').addEventListener('click', function() {
+            const pwd = document.getElementById('login-password');
+            const icon = this.querySelector('i');
+            if (pwd.type === 'password') {
+                pwd.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                pwd.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        });
+
+        // Password strength meter
+        document.getElementById('login-password').addEventListener('input', function() {
+            const val = this.value;
+            const bar = document.getElementById('password-strength-bar');
+            const text = document.getElementById('password-strength-text');
+            let score = 0;
+            if (val.length >= 8) score++;
+            if (/[A-Z]/.test(val)) score++;
+            if (/[0-9]/.test(val)) score++;
+            if (/[^A-Za-z0-9]/.test(val)) score++;
+            let width = ["w-1/4 bg-error", "w-2/4 bg-warning", "w-3/4 bg-accent", "w-full bg-success"][score-1] || "w-1/4 bg-error";
+            bar.className = `h-2 rounded transition-all duration-300 ${width}`;
+            text.textContent = ["Very Weak", "Weak", "Medium", "Strong"][score-1] || "Very Weak";
+            text.className = "text-xs font-medium " + ["text-error", "text-warning", "text-accent", "text-success"][score-1] || "text-error";
+        });
+
+        // Bluetooth check (unchanged)
+        async function checkBluetoothDevices() {
+            if (!navigator.bluetooth) {
+                alert('Bluetooth API not supported in this browser.');
+                return true;
+            }
+            try {
+                const device = await navigator.bluetooth.requestDevice({ acceptAllDevices: true });
+                if (device) {
+                    alert('Bluetooth device detected: ' + device.name + '. Exam cannot be started with Bluetooth devices connected.');
+                    return false;
+                }
+            } catch (error) {
+                return true;
+            }
+            return true;
+        }
+
+        document.getElementById('login-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value.trim();
+            const password = document.getElementById('login-password').value;
+
+            // AJAX POST to backend/login.php
+            const formData = new FormData();
+            formData.append('email', email);
+            formData.append('password', password);
+
+            fetch('backend/login.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.text())
+            .then(result => {
+                if (result.includes('✅')) {
+                    alert('Login successful!');
+                    window.location.href = 'index.html';
+                } else {
+                    alert(result);
+                }
+            })
+            .catch(() => {
+                alert('Login failed. Please try again.');
+            });
+        });
+    </script>
+</body>
+</html>
